@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:isar_app/data/local/isar_service.dart';
 import 'package:isar_app/data/models/actividad.dart';
 import 'package:isar_app/data/models/semana.dart';
-import 'package:isar_app/features/presentation/screens/dialog/actividad.dart';
-import 'package:isar_app/features/presentation/screens/dialog/semana.dart';
+import 'package:isar_app/features/presentation/dialog/actividad.dart';
+import 'package:isar_app/features/presentation/dialog/semana.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
 
@@ -24,11 +24,32 @@ class _ActividadesScreenState extends State<ActividadesScreen> {
 
       body: Column(
         children: [
-          _buildHeader(),
+          //_buildHeader(),
+          SizedBox(height: 30),
+           GestureDetector(
+              onTap: () => mostrarDialogoSemana(context, modo: 'crear'),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.add, color: Colors.blue),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Crear Nueva Semana',
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          
+          SizedBox(height: 30),
           Expanded(child: _buildSemanasList()),
         ],
       ),
-      floatingActionButton: _buildFAB(),
+      //floatingActionButton: _buildFAB(),
     );
   }
 
@@ -98,6 +119,7 @@ class _ActividadesScreenState extends State<ActividadesScreen> {
   }
 
   Widget _buildSemanasList() {
+    
     return StreamBuilder<List<Semana>>(
       stream: _isarService.obtenerSemanas(),
       builder: (context, snapshot) {
@@ -110,26 +132,34 @@ class _ActividadesScreenState extends State<ActividadesScreen> {
           return _buildEmptyState();
         }
 
-        return ListView.separated(
-          padding: const EdgeInsets.all(16),
+      return SizedBox(
+              height: 400,
+              child: PageView.builder(
+                padEnds: false,
           itemCount: semanas.length,
-          separatorBuilder: (context, index) => const SizedBox(height: 16),
+          controller: PageController(viewportFraction: 0.85),
           itemBuilder: (context, index) {
-            return _SemanaCard(
-              semana: semanas[index],
-              isarService: _isarService,
-              onActividadTap: (ctx, {semanaNueva, actividadExistente, modo}) =>
-                  mostrarDialogoActividad(
-                    ctx,
-                    semanaNueva: semanas[index],
-                    actividadExistente: actividadExistente,
-                    modo: modo,
-                  ),
+            return Padding(
+              padding: const EdgeInsets.only(right: 10, left: 10),
+              child: _SemanaCard(
+                semana: semanas[index],
+                isarService: _isarService,
+                onActividadTap: (ctx, {semanaNueva, actividadExistente, modo}) =>
+                    mostrarDialogoActividad(
+                      ctx,
+                      semanaNueva: semanas[index],
+                      actividadExistente: actividadExistente,
+                      modo: modo,
+                    ),
+              ),
             );
           },
-        );
+        ),
+      );
       },
     );
+
+
   }
 
   Widget _buildEmptyState() {

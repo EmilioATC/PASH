@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:isar_app/features/presentation/screens/actividades_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart'
     as smooth_page_indicator;
 
@@ -13,6 +15,7 @@ class OnBoardingScreen extends StatefulWidget {
 class _OnBoardingScreenState extends State<OnBoardingScreen> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final PageController _pageController = PageController(initialPage: 0);
+  final prefs = SharedPreferences.getInstance();
 
   @override
   void dispose() {
@@ -51,10 +54,11 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
               child: Padding(
                 padding: const EdgeInsets.only(top: 16.0, right: 16.0),
                 child: TextButton(
-                  onPressed: () => Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (_) => ActividadesScreen()),
-                  ),
+                  onPressed: () async {
+                    final sharedPrefs = await prefs;
+                    await sharedPrefs.setBool('is_first_time', false);
+                    context.go('/');
+                  },
                   child: Text(
                     'Omitir',
                     style: TextStyle(color: Color(0xFF1e88e5), fontSize: 15),
@@ -139,12 +143,13 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                                   curve: Curves.ease,
                                 );
                               } else {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => ActividadesScreen(),
-                                  ),
+                                final sharedPrefs = await prefs;
+
+                                await sharedPrefs.setBool(
+                                  'is_first_time',
+                                  false,
                                 );
+                                context.go('/');
                               }
                             },
                             child: Text(

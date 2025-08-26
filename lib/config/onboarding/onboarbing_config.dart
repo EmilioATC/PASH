@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:isar_app/features/presentation/screens/actividades_screen.dart';
+import 'package:isar_app/features/presentation/screens/home_screen.dart';
 import 'package:isar_app/features/presentation/screens/onboarding/onboarding_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,19 +23,11 @@ class _SplashPageState extends State<SplashPage> {
 
     if (isFirstTime) {
       // Navegar al Onboarding
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => OnBoardingScreen()),
-      );
+      context.go('/onboarding-screen');
 
-      // Guardar que ya no es la primera vez
-      await prefs.setBool('is_first_time', false);
     } else {
       // Navegar directo al Home
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => ActividadesScreen()),
-      );
+      context.go('/');
     }
   }
 

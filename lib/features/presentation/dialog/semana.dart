@@ -4,7 +4,7 @@ import 'package:isar_app/data/local/isar_service.dart';
 import 'package:isar_app/data/models/actividad.dart';
 import 'package:isar_app/features/presentation/widgets/semana_dropdown.dart';
 
-import '../../../../data/models/semana.dart';
+import '../../../data/models/semana.dart';
 
 Future<void> mostrarDialogoSemana(
   BuildContext context, {

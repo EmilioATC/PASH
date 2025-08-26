@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:isar_app/config/router/app_router.dart';
 import 'package:isar_app/data/local/isar_service.dart';
-import 'package:isar_app/features/presentation/widgets/onboarbing_config.dart';
 import 'package:timezone/standalone.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -150,11 +150,17 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'P.A.S.H.',
+      routerConfig: appRouter,
       debugShowCheckedModeBanner: false,
-      home: SplashPage(),
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Color(0xFF1e88e5),
+          primary: Color(0xFF1e88e5),
+        ),
+        useMaterial3: true,
+      ),
     );
   }
 }
