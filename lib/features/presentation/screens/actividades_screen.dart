@@ -4,8 +4,6 @@ import 'package:isar_app/data/models/actividad.dart';
 import 'package:isar_app/data/models/semana.dart';
 import 'package:isar_app/features/presentation/dialog/actividad.dart';
 import 'package:isar_app/features/presentation/dialog/semana.dart';
-import 'package:quickalert/models/quickalert_type.dart';
-import 'package:quickalert/widgets/quickalert_dialog.dart';
 
 class ActividadesScreen extends StatefulWidget {
   const ActividadesScreen({super.key});
@@ -20,146 +18,124 @@ class _ActividadesScreenState extends State<ActividadesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
-
-      body: Column(
-        children: [
-          //_buildHeader(),
-          SizedBox(height: 30),
-           GestureDetector(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFE3F2FD), Color(0xFFF8FAFB)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Column(
+          children: [
+            const SizedBox(height: 40),
+            GestureDetector(
               onTap: () => mostrarDialogoSemana(context, modo: 'crear'),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.add, color: Colors.blue),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Crear Nueva Semana',
-                    style: TextStyle(
-                      color: Colors.blue,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.blue.shade400, Colors.blue.shade700],
                   ),
-                ],
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color.fromARGB(255, 175, 212, 255),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.add, color: Colors.white),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Crear Nueva Semana',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.2,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          
-          SizedBox(height: 30),
-          Expanded(child: _buildSemanasList()),
-        ],
-      ),
-      //floatingActionButton: _buildFAB(),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Container(
-      padding: const EdgeInsets.only(top: 40, left: 20, right: 20, bottom: 15),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(bottom: BorderSide(color: Colors.grey, width: 0.2)),
-      ),
-      child: Row(
-        children: [
-          IconButton(
-            onPressed: () => {},
-            icon: Icon(Icons.calendar_today, color: Colors.blue, size: 20),
-          ),
-          const SizedBox(width: 8),
-          const Text(
-            'PASH - Planifica tu semana',
-            style: TextStyle(
-              fontSize: 16,
-              color: Color.fromARGB(255, 65, 65, 65),
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const Spacer(),
-          // StreamBuilder<List<Semana>>(
-          //   stream: _isarService.obtenerSemanas(),
-          //   builder: (context, snapshot) {
-          //     final semanas = snapshot.data ?? [];
-          //     return Text(
-          //       '${semanas.length} semanas',
-          //       style: TextStyle(
-          //         fontSize: 14,
-          //         color: Colors.grey[600],
-          //         fontWeight: FontWeight.w500,
-          //       ),
-          //     );
-          //   },
-          // ),
-          IconButton(
-            onPressed: () => {
-              QuickAlert.show(
-                context: context,
-                type: QuickAlertType.success,
-                text: 'Transaction Completed Successfully!',
-                autoCloseDuration: const Duration(seconds: 3),
-              ),
-            },
-            icon: Icon(Icons.more_vert, color: Colors.grey),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFAB() {
-    return FloatingActionButton.extended(
-      onPressed: () => mostrarDialogoSemana(context, modo: 'crear'),
-      backgroundColor: Colors.blue,
-      icon: const Icon(Icons.add, color: Colors.white),
-      label: const Text(
-        'Nueva Semana',
-        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+            const SizedBox(height: 10),
+            Expanded(child: _buildSemanasList()),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildSemanasList() {
-    
     return StreamBuilder<List<Semana>>(
       stream: _isarService.obtenerSemanas(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
-
         final semanas = snapshot.data ?? [];
         if (semanas.isEmpty) {
           return _buildEmptyState();
         }
-
-      return SizedBox(
-              height: 400,
+        return Column(
+          children: [
+            Expanded(
               child: PageView.builder(
-                padEnds: false,
-          itemCount: semanas.length,
-          controller: PageController(viewportFraction: 0.85),
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.only(right: 10, left: 10),
-              child: _SemanaCard(
-                semana: semanas[index],
-                isarService: _isarService,
-                onActividadTap: (ctx, {semanaNueva, actividadExistente, modo}) =>
-                    mostrarDialogoActividad(
-                      ctx,
-                      semanaNueva: semanas[index],
-                      actividadExistente: actividadExistente,
-                      modo: modo,
+                scrollDirection: Axis.horizontal,
+                itemCount: semanas.length,
+                itemBuilder: (context, index) {
+                  return SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 8,
                     ),
+                    child: _SemanaCard(
+                      semana: semanas[index],
+                      isarService: _isarService,
+                      onActividadTap:
+                          (ctx, {semanaNueva, actividadExistente, modo}) =>
+                              mostrarDialogoActividad(
+                                ctx,
+                                semanaNueva: semanas[index],
+                                actividadExistente: actividadExistente,
+                                modo: modo,
+                              ),
+                    ),
+                  );
+                },
               ),
-            );
-          },
-        ),
-      );
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Icon(Icons.swipe, color: Colors.blueGrey, size: 22),
+                  SizedBox(width: 8),
+                  Text(
+                    'Desliza para ver otras semanas',
+                    style: TextStyle(
+                      color: Colors.blueGrey,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
       },
     );
-
-
   }
 
   Widget _buildEmptyState() {
@@ -167,30 +143,34 @@ class _ActividadesScreenState extends State<ActividadesScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.event_note, size: 80, color: Colors.grey[400]),
-          const SizedBox(height: 16),
+          Icon(Icons.event_note, size: 90, color: Colors.blue[100]),
+          const SizedBox(height: 20),
           Text(
             'No hay semanas creadas',
             style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey[600],
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.blueGrey[700],
             ),
           ),
           const SizedBox(height: 8),
           Text(
             'Crea tu primera semana para comenzar',
-            style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+            style: TextStyle(fontSize: 15, color: Colors.blueGrey[400]),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 28),
           ElevatedButton.icon(
             onPressed: () => mostrarDialogoSemana(context, modo: 'crear'),
             icon: const Icon(Icons.add),
             label: const Text('Crear Primera Semana'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
+              backgroundColor: Colors.blue[700],
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18),
+              ),
+              elevation: 2,
             ),
           ),
         ],
@@ -219,44 +199,50 @@ class _SemanaCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(22),
         boxShadow: [
           BoxShadow(
-            color: const Color.fromARGB(255, 210, 210, 210),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+            color: Color.fromARGB(255, 214, 233, 255),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
           ),
         ],
+        border: Border.all(
+          color: semana.estado ? Colors.blue.shade100 : Colors.grey.shade300,
+          width: 1.2,
+        ),
       ),
       child: Column(
-        children: [_buildSemanaHeader(context), _buildActividadesList(context)],
+        children: [_buildSemanaHeader(context), _buildActividadesList(context), SizedBox(height: 10)],
       ),
     );
   }
 
   Widget _buildSemanaHeader(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: semana.estado
-              ? [Colors.blue.shade400, Colors.blue.shade600]
-              : [Colors.grey.shade500, Colors.grey.shade600],
+              ? [Colors.blue.shade400, Colors.blue.shade700]
+              : [Colors.grey.shade400, Colors.grey.shade600],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(16),
-          topRight: Radius.circular(16),
+          topLeft: Radius.circular(22),
+          topRight: Radius.circular(22),
         ),
       ),
       child: Row(
         children: [
           Expanded(
             child: GestureDetector(
-              onTap: () => mostrarDialogoSemana(context, semana: semana, modo: 'editar'),
+              onTap: () =>
+                  mostrarDialogoSemana(context, semana: semana, modo: 'editar'),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -264,11 +250,12 @@ class _SemanaCard extends StatelessWidget {
                     'Semana del ${semana.fechaInicio.day}/${semana.fechaInicio.month} al ${semana.fechaFin.day}/${semana.fechaFin.month}',
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.2,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   StreamBuilder<List<Actividad>>(
                     stream: isarService.obtenerActividadesPorSemana(semana),
                     builder: (context, snapshot) {
@@ -282,16 +269,33 @@ class _SemanaCard extends StatelessWidget {
                             sum +
                             actividad.valor * actividad.repeticionesCompletadas,
                       );
-              
-                      return Column(
+                      return Row(
                         children: [
+                          Icon(
+                            Icons.check_circle,
+                            color: Colors.white70,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 4),
                           Text(
                             actividades.isEmpty
                                 ? 'Sin actividades'
-                                : '$completadas de ${actividades.length} completadas con $recompensa pts de recompensa',
+                                : '$completadas/${actividades.length} completadas',
                             style: TextStyle(
-                              color: Colors.grey[200],
+                              color: Colors.white,
                               fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Icon(Icons.star, color: Colors.amber[200], size: 18),
+                          const SizedBox(width: 2),
+                          Text(
+                            '$recompensa pts',
+                            style: TextStyle(
+                              color: Colors.amber[100],
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ],
@@ -302,24 +306,39 @@ class _SemanaCard extends StatelessWidget {
               ),
             ),
           ),
-          Container( 
+          Container(
             decoration: BoxDecoration(
               color: semana.estado
                   ? const Color.fromARGB(255, 99, 170, 229)
                   : Colors.grey.shade700,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: [
+                BoxShadow(
+                  color: Color.fromARGB(255, 99, 170, 229),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
-            child: semana.estado ? IconButton(
-              onPressed: () =>
-                  onActividadTap(context, semanaNueva: semana, modo: 'crear'),
-              icon: const Icon(Icons.add, color: Colors.white),
-              tooltip: 'Agregar actividad',
-            ) : IconButton(
-              onPressed: () => {},
-              icon: const Icon(Icons.arrow_downward_rounded, color: Colors.white),
-              tooltip: 'Editar semana',
-            ),
-          ), 
+            child: semana.estado
+                ? IconButton(
+                    onPressed: () => onActividadTap(
+                      context,
+                      semanaNueva: semana,
+                      modo: 'crear',
+                    ),
+                    icon: const Icon(Icons.add, color: Colors.white),
+                    tooltip: 'Agregar actividad',
+                  )
+                : IconButton(
+                    onPressed: () => {},
+                    icon: const Icon(
+                      Icons.arrow_downward_rounded,
+                      color: Colors.white,
+                    ),
+                    tooltip: 'Editar semana',
+                  ),
+          ),
         ],
       ),
     );
@@ -371,11 +390,7 @@ class _SemanaCard extends StatelessWidget {
             padding: const EdgeInsets.all(24),
             child: Column(
               children: [
-                Icon(
-                  Icons.lock_outline,
-                  size: 48,
-                  color: Colors.grey[400],
-                ),
+                Icon(Icons.lock_outline, size: 48, color: Colors.grey[400]),
                 const SizedBox(height: 12),
                 Text(
                   'Semana cerrada',
@@ -388,10 +403,7 @@ class _SemanaCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   'No puedes modificar actividades en una semana cerrada.',
-                  style: TextStyle(
-                    color: Colors.grey[500],
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Colors.grey[500], fontSize: 14),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -445,13 +457,22 @@ class _ActividadTile extends StatefulWidget {
 class _ActividadTileState extends State<_ActividadTile> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: const EdgeInsets.all(16),
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 350),
+      curve: Curves.easeOut,
+      margin: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.blue.shade50, width: 1.2),
+        boxShadow: [
+          BoxShadow(
+            color: Color.fromARGB(255, 219, 239, 255),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -470,18 +491,26 @@ class _ActividadTileState extends State<_ActividadTile> {
     return Row(
       children: [
         Container(
-          width: 12,
-          height: 12,
+          width: 14,
+          height: 14,
           decoration: BoxDecoration(
             color: _getStatusColor(),
-            borderRadius: BorderRadius.circular(6),
+            borderRadius: BorderRadius.circular(7),
+            border: Border.all(color: Colors.white, width: 2),
+            boxShadow: [
+              BoxShadow(
+                color: _getStatusColor().withAlpha(18),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 14),
         Expanded(
           child: Text(
             widget.actividad.nombre,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
         ),
         PopupMenuButton<String>(
@@ -527,7 +556,7 @@ class _ActividadTileState extends State<_ActividadTile> {
         if (widget.actividad.descripcion.isNotEmpty)
           Text(
             widget.actividad.descripcion,
-            style: TextStyle(color: Colors.grey[600], fontSize: 14),
+            style: TextStyle(color: Colors.blueGrey[400], fontSize: 14),
           ),
         const SizedBox(height: 8),
         Row(
@@ -562,22 +591,22 @@ class _ActividadTileState extends State<_ActividadTile> {
     required Color color,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        color: color.withAlpha(13),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: color.withAlpha(25)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: color),
+          Icon(icon, size: 13, color: color),
           const SizedBox(width: 4),
           Text(
             label,
             style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
               color: color,
             ),
           ),
@@ -592,12 +621,12 @@ class _ActividadTileState extends State<_ActividadTile> {
       children: [
         const Text(
           'Progreso:',
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 8),
         Wrap(
-          spacing: 8,
-          runSpacing: 8,
+          spacing: 10,
+          runSpacing: 10,
           children: List.generate(widget.actividad.repeticiones, (index) {
             final estaMarcado =
                 index < widget.actividad.repeticionesCompletadas;
@@ -605,34 +634,34 @@ class _ActividadTileState extends State<_ActividadTile> {
               onTap: () => _toggleRepeticion(index),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                width: 36,
-                height: 36,
+                width: 38,
+                height: 38,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(10),
                   color: estaMarcado ? Colors.green : Colors.white,
                   border: Border.all(
-                    color: estaMarcado ? Colors.green : Colors.grey.shade300,
+                    color: estaMarcado ? Colors.green : Colors.blue.shade100,
                     width: 2,
                   ),
                   boxShadow: estaMarcado
                       ? [
                           BoxShadow(
-                            color: Colors.green.withOpacity(0.3),
-                            blurRadius: 4,
+                            color: Colors.green.withAlpha(22),
+                            blurRadius: 6,
                             offset: const Offset(0, 2),
                           ),
                         ]
                       : null,
                 ),
                 child: estaMarcado
-                    ? const Icon(Icons.check, size: 20, color: Colors.white)
+                    ? const Icon(Icons.check, size: 22, color: Colors.white)
                     : Center(
                         child: Text(
                           '${index + 1}',
                           style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey[600],
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blueGrey[400],
                           ),
                         ),
                       ),
@@ -646,17 +675,11 @@ class _ActividadTileState extends State<_ActividadTile> {
 
   Future<void> _toggleRepeticion(int index) async {
     if (index < widget.actividad.repeticionesCompletadas) {
-      // Desmarcar: reducir repeticiones completadas
       widget.actividad.repeticionesCompletadas = index;
     } else if (index == widget.actividad.repeticionesCompletadas) {
-      // Marcar la siguiente: aumentar repeticiones completadas
       widget.actividad.repeticionesCompletadas++;
     }
-
-    // Actualizar estado
     _updateEstado();
-
-    // Guardar en base de datos
     widget.onRepeticionChanged();
 
     setState(() {});

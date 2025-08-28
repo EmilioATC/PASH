@@ -6,14 +6,12 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Perfil'),
-      ),
       body: Padding(
         padding: const EdgeInsets.only(top: 20),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
+            SizedBox(height: 80),
             Container(
               width: 120,
               height: 120,

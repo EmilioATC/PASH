@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:isar_app/features/presentation/screens/actividades_screen.dart';
-import 'package:isar_app/features/presentation/screens/home_screen.dart';
-import 'package:isar_app/features/presentation/screens/onboarding/onboarding_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashPage extends StatefulWidget {
