@@ -105,7 +105,7 @@ class IsarService {
     });
   }
 
-  Future<List<Actividad>> obtenerTodasLasActividades() async {
-    return await isar.actividads.where().findAll();
+  Stream<List<Actividad>> obtenerTodasLasActividades() {
+    return isar.actividads.where().watch(fireImmediately: true);
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar_app/config/router/app_router.dart';
 import 'package:isar_app/data/local/isar_service.dart';
 import 'package:timezone/standalone.dart';
@@ -9,7 +10,7 @@ import 'package:timezone/timezone.dart' as tz;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await IsarService.initialize();
-  runApp(const MyApp());
+  runApp(ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatefulWidget {
@@ -113,7 +114,7 @@ class _MyAppState extends State<MyApp> {
       title: '¿Estás libre?',
       body: '¡Es hora de revisar tus actividades!',
       hour: 15,
-      minute:40
+      minute: 40,
     );
     scheduleWeeklyNotification(
       id: 1,

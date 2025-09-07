@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:isar_app/features/presentation/dialog/name_user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart'
     as smooth_page_indicator;
 
-class OnBoardingScreen extends StatefulWidget {
+class OnBoardingScreen extends ConsumerStatefulWidget {
   const OnBoardingScreen({super.key});
 
   @override
-  State<OnBoardingScreen> createState() => _OnBoardingScreenState();
+  ConsumerState<OnBoardingScreen> createState() => _OnBoardingScreenState();
 }
 
-class _OnBoardingScreenState extends State<OnBoardingScreen> {
+class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final PageController _pageController = PageController(initialPage: 0);
   final prefs = SharedPreferences.getInstance();
@@ -56,7 +58,9 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                   onPressed: () async {
                     final sharedPrefs = await prefs;
                     await sharedPrefs.setBool('is_first_time', false);
-                    context.go('/');
+                    if (context.mounted) {
+                      context.go('/');
+                    }
                   },
                   child: Text(
                     'Omitir',
@@ -148,7 +152,14 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                                   'is_first_time',
                                   false,
                                 );
-                                context.go('/');
+                                sharedPrefs.getString('is_name_user') ?? "";
+                                if (context.mounted) {
+                                  await mostrarDialogoName(
+                                    context,
+                                    ref,
+                                    modo: 'crear',
+                                  );
+                                }
                               }
                             },
                             child: Text(
