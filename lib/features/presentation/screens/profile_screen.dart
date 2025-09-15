@@ -5,6 +5,7 @@ import 'package:isar_app/data/models/actividad.dart';
 import 'package:isar_app/data/models/semana.dart';
 import 'package:isar_app/features/presentation/dialog/name_user.dart';
 import 'package:isar_app/features/presentation/providers/user_provider.dart';
+import 'package:isar_app/features/presentation/screens/notifications_settings_screen.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -13,7 +14,7 @@ class ProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final name = ref.watch(nameProvider);
     final IsarService isarService = IsarService();
-    
+
     return StreamBuilder<List<Semana>>(
       stream: isarService.obtenerSemanas(),
       builder: (context, snapshot) {
@@ -31,11 +32,7 @@ class ProfileScreen extends ConsumerWidget {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [
-                  Colors.blue.shade50,
-                  Colors.white,
-                  Colors.white,
-                ],
+                colors: [Colors.blue.shade50, Colors.white, Colors.white],
                 stops: [0.0, 0.5, 1.0],
               ),
             ),
@@ -45,13 +42,13 @@ class ProfileScreen extends ConsumerWidget {
                 child: Column(
                   children: [
                     _buildProfileHeader(name),
-                    
+
                     _buildRewardsCard(isarService, semanas),
-                    
+
                     const SizedBox(height: 32),
-                    
+
                     _buildSettingsSection(context, ref),
-                    
+
                     const SizedBox(height: 20),
                   ],
                 ),
@@ -78,10 +75,7 @@ class ProfileScreen extends ConsumerWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
-                  colors: [
-                    Colors.blue.shade400,
-                    Colors.blue.shade900,
-                  ],
+                  colors: [Colors.blue.shade400, Colors.blue.shade900],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -99,17 +93,13 @@ class ProfileScreen extends ConsumerWidget {
                   color: Colors.white,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  Icons.face,
-                  color: Colors.grey.shade700,
-                  size: 60,
-                ),
+                child: Icon(Icons.face, color: Colors.grey.shade700, size: 60),
               ),
             ),
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // Nombre del usuario
           Text(
             name ?? 'Anónimo',
@@ -120,9 +110,9 @@ class ProfileScreen extends ConsumerWidget {
               letterSpacing: 0.5,
             ),
           ),
-          
+
           const SizedBox(height: 8),
-          
+
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
@@ -149,10 +139,7 @@ class ProfileScreen extends ConsumerWidget {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            Colors.amber.shade400,
-            Colors.orange.shade500,
-          ],
+          colors: [Colors.amber.shade400, Colors.orange.shade500],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -170,11 +157,7 @@ class ProfileScreen extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.stars_rounded,
-                color: Colors.white,
-                size: 28,
-              ),
+              Icon(Icons.stars_rounded, color: Colors.white, size: 28),
               const SizedBox(width: 8),
               Text(
                 'Recompensas Totales',
@@ -186,15 +169,16 @@ class ProfileScreen extends ConsumerWidget {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           StreamBuilder<List<Actividad>>(
             stream: semanas.isNotEmpty
                 ? isarService.obtenerTodasLasActividades()
                 : Stream<List<Actividad>>.value([]),
             builder: (context, actividadesSnapshot) {
-              if (actividadesSnapshot.connectionState == ConnectionState.waiting) {
+              if (actividadesSnapshot.connectionState ==
+                  ConnectionState.waiting) {
                 return SizedBox(
                   height: 60,
                   child: Center(
@@ -258,17 +242,23 @@ class ProfileScreen extends ConsumerWidget {
               ),
             ),
           ),
-          
+
           _buildSettingItem(
             icon: Icons.notifications_outlined,
             iconColor: Colors.blue,
             title: 'Notificaciones',
-            subtitle: 'Gestiona tus alertas',
+            subtitle: 'Gestiona tus alertas y recordatorios',
             onTap: () {
-              // Implementar navegación a notificaciones
+              // Navegar a la pantalla de notificaciones
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const NotificationsSettingsScreen(),
+                ),
+              );
             },
           ),
-          
+
           _buildSettingItem(
             icon: Icons.edit_outlined,
             iconColor: Colors.green,
@@ -278,7 +268,7 @@ class ProfileScreen extends ConsumerWidget {
               await mostrarDialogoName(context, ref, modo: 'editar');
             },
           ),
-          
+
           _buildSettingItem(
             icon: Icons.settings_outlined,
             iconColor: Colors.purple,
@@ -288,7 +278,7 @@ class ProfileScreen extends ConsumerWidget {
               // Implementar navegación a configuración
             },
           ),
-          
+
           _buildSettingItem(
             icon: Icons.help_outline,
             iconColor: Colors.orange,
@@ -329,10 +319,7 @@ class ProfileScreen extends ConsumerWidget {
                   offset: const Offset(0, 4),
                 ),
               ],
-              border: Border.all(
-                color: Colors.grey.withAlpha(13),
-                width: 1,
-              ),
+              border: Border.all(color: Colors.grey.withAlpha(13), width: 1),
             ),
             child: Row(
               children: [
@@ -343,15 +330,11 @@ class ProfileScreen extends ConsumerWidget {
                     color: iconColor.withAlpha(13),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(
-                    icon,
-                    color: iconColor,
-                    size: 24,
-                  ),
+                  child: Icon(icon, color: iconColor, size: 24),
                 ),
-                
+
                 const SizedBox(width: 16),
-                
+
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -375,7 +358,7 @@ class ProfileScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-                
+
                 Icon(
                   Icons.arrow_forward_ios,
                   color: Colors.grey.shade400,

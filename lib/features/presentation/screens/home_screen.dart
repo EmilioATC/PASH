@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:isar_app/data/local/isar_service.dart';
 import 'package:isar_app/data/models/actividad.dart';
 import 'package:isar_app/data/models/semana.dart';
+import 'package:isar_app/features/presentation/screens/notifications_settings_screen.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 class HomePage extends StatefulWidget {
@@ -53,9 +54,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             pinned: true,
             elevation: 0,
             backgroundColor: Colors.transparent,
-            flexibleSpace: FlexibleSpaceBar(
-              background: _buildHeader(),
-            ),
+            flexibleSpace: FlexibleSpaceBar(background: _buildHeader()),
           ),
           SliverToBoxAdapter(
             child: Column(
@@ -78,10 +77,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            Color(0xFF1e88e5),
-            Color(0xFF1565c0),
-          ],
+          colors: [Color(0xFF1e88e5), Color(0xFF1565c0)],
         ),
       ),
       child: ClipRRect(
@@ -137,19 +133,31 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                     ),
                                   ],
                                 ),
-                                Container(
-                                  padding: const EdgeInsets.all(12),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withAlpha(30),
-                                    borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(
-                                      color: Colors.white.withAlpha(25),
+                                GestureDetector(
+                                  onTap: () {
+                                    // Navegar a la pantalla de notificaciones
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const NotificationsSettingsScreen(),
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withAlpha(30),
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(
+                                        color: Colors.white.withAlpha(25),
+                                      ),
                                     ),
-                                  ),
-                                  child: const Icon(
-                                    Icons.notifications_none,
-                                    color: Colors.white,
-                                    size: 24,
+                                    child: const Icon(
+                                      Icons.notifications_none,
+                                      color: Colors.white,
+                                      size: 24,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -204,7 +212,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         }
 
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24,),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Row(
             children: [
               Expanded(
@@ -218,11 +226,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               const SizedBox(width: 16),
               Expanded(
                 child: StreamBuilder<List<Actividad>>(
-                  stream: semanas.isNotEmpty 
+                  stream: semanas.isNotEmpty
                       ? _isarService.obtenerActividadesPorSemana(semanas.first)
                       : Stream<List<Actividad>>.value([]),
                   builder: (context, actividadesSnapshot) {
-                    if (actividadesSnapshot.connectionState == ConnectionState.waiting) {
+                    if (actividadesSnapshot.connectionState ==
+                        ConnectionState.waiting) {
                       return _StatCard(
                         title: 'Puntos Ganados',
                         value: '...',
@@ -303,7 +312,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 },
               ),
             );
-            
           },
         ),
       ],
@@ -344,10 +352,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           const SizedBox(height: 8),
           Text(
             'Comienza creando tu primera semana de actividades',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[500],
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey[500]),
             textAlign: TextAlign.center,
           ),
         ],
@@ -380,7 +385,8 @@ class _StatCard extends StatefulWidget {
   State<_StatCard> createState() => _StatCardState();
 }
 
-class _StatCardState extends State<_StatCard> with SingleTickerProviderStateMixin {
+class _StatCardState extends State<_StatCard>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
 
@@ -475,7 +481,8 @@ class _WeekCard extends StatefulWidget {
   State<_WeekCard> createState() => _WeekCardState();
 }
 
-class _WeekCardState extends State<_WeekCard> with SingleTickerProviderStateMixin {
+class _WeekCardState extends State<_WeekCard>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _slideAnimation;
   late Animation<double> _fadeAnimation;
@@ -490,14 +497,8 @@ class _WeekCardState extends State<_WeekCard> with SingleTickerProviderStateMixi
     _slideAnimation = Tween<double>(
       begin: 50.0,
       end: 0.0,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOutCubic,
-    ));
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(_controller);
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_controller);
     _controller.forward();
   }
 
@@ -530,7 +531,9 @@ class _WeekCardState extends State<_WeekCard> with SingleTickerProviderStateMixi
                 ],
               ),
               child: StreamBuilder<List<Actividad>>(
-                stream: widget.isarService.obtenerActividadesPorSemana(widget.semana),
+                stream: widget.isarService.obtenerActividadesPorSemana(
+                  widget.semana,
+                ),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
@@ -550,7 +553,7 @@ class _WeekCardState extends State<_WeekCard> with SingleTickerProviderStateMixi
                     0,
                     (sum, a) => sum + (a.valor * a.repeticionesCompletadas),
                   );
-                  final progreso = totalActividades > 0 
+                  final progreso = totalActividades > 0
                       ? (completadas / totalActividades).clamp(0.0, 1.0)
                       : 0.0;
 
@@ -560,213 +563,242 @@ class _WeekCardState extends State<_WeekCard> with SingleTickerProviderStateMixi
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                        Container(
-                          padding: const EdgeInsets.all(24),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                const Color.fromARGB(29, 21, 101, 192),
-                                const Color.fromARGB(73, 30, 136, 229),
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
+                          Container(
+                            padding: const EdgeInsets.all(24),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  const Color.fromARGB(29, 21, 101, 192),
+                                  const Color.fromARGB(73, 30, 136, 229),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(24),
+                                topRight: Radius.circular(24),
+                              ),
                             ),
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(24),
-                              topRight: Radius.circular(24),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '${widget.semana.fechaInicio.day}/${widget.semana.fechaInicio.month} - ${widget.semana.fechaFin.day}/${widget.semana.fechaFin.month}',
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                          color: Color(0xFF1565c0),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        '$completadas de $totalActividades completadas',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(
+                                      colors: [
+                                        Color(0xFF1e88e5),
+                                        Color(0xFF1565c0),
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(
+                                        Icons.stars,
+                                        color: Colors.white,
+                                        size: 16,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        '$recompensa pts',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                          Padding(
+                            padding: const EdgeInsets.all(24),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                      '${widget.semana.fechaInicio.day}/${widget.semana.fechaInicio.month} - ${widget.semana.fechaFin.day}/${widget.semana.fechaFin.month}',
-                                      style: const TextStyle(
+                                    const Text(
+                                      'Progreso General',
+                                      style: TextStyle(
                                         fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Text(
+                                      '${(progreso * 100).round()}%',
+                                      style: const TextStyle(
+                                        fontSize: 14,
                                         fontWeight: FontWeight.w600,
                                         color: Color(0xFF1565c0),
                                       ),
                                     ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      '$completadas de $totalActividades completadas',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey[600],
-                                      ),
-                                    ),
                                   ],
                                 ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
+                                const SizedBox(height: 12),
+                                LinearPercentIndicator(
+                                  percent: progreso,
+                                  lineHeight: 8,
+                                  animation: true,
+                                  animationDuration: 1500,
+                                  progressColor: const Color(0xFF1565c0),
+                                  backgroundColor: Colors.grey[200]!,
+                                  barRadius: const Radius.circular(4),
                                 ),
-                                decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [Color(0xFF1e88e5), Color(0xFF1565c0)],
-                                  ),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(
-                                      Icons.stars,
-                                      color: Colors.white,
-                                      size: 16,
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      '$recompensa pts',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(24),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
+                                const SizedBox(height: 24),
+                                if (actividades.isNotEmpty) ...[
                                   const Text(
-                                    'Progreso General',
+                                    'Actividades',
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
-                                  Text(
-                                    '${(progreso * 100).round()}%',
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xFF1565c0),
+                                  const SizedBox(height: 12),
+                                  SizedBox(
+                                    height: 210,
+                                    child: ListView.builder(
+                                      itemCount: actividades.length,
+                                      itemBuilder: (context, idx) {
+                                        final actividad = actividades[idx];
+                                        final progresoActividad =
+                                            actividad.repeticiones > 0
+                                            ? (actividad.repeticionesCompletadas /
+                                                      actividad.repeticiones)
+                                                  .clamp(0.0, 1.0)
+                                            : 0.0;
+
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                            bottom: 12,
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                width: 8,
+                                                height: 8,
+                                                decoration: BoxDecoration(
+                                                  color:
+                                                      actividad.estado ==
+                                                          EstadoActividad
+                                                              .completado
+                                                      ? const Color(0xFF10b981)
+                                                      : Colors.grey[400],
+                                                  shape: BoxShape.circle,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 12),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      actividad.nombre,
+                                                      style: const TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                    const SizedBox(height: 4),
+                                                    LinearPercentIndicator(
+                                                      percent:
+                                                          progresoActividad,
+                                                      width:
+                                                          MediaQuery.of(
+                                                            context,
+                                                          ).size.width *
+                                                          0.45,
+                                                      lineHeight: 4,
+                                                      animation: true,
+                                                      animationDuration: 1000,
+                                                      progressColor:
+                                                          const Color(
+                                                            0xFF10b981,
+                                                          ),
+                                                      backgroundColor:
+                                                          Colors.grey[200]!,
+                                                      barRadius:
+                                                          const Radius.circular(
+                                                            2,
+                                                          ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Text(
+                                                '${actividad.valor} pts',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.grey[600],
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ] else ...[
+                                  Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 20,
+                                      ),
+                                      child: Text(
+                                        'No hay actividades registradas',
+                                        style: TextStyle(
+                                          color: Colors.grey[500],
+                                          fontStyle: FontStyle.italic,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ],
-                              ),
-                              const SizedBox(height: 12),
-                              LinearPercentIndicator(
-                                percent: progreso,
-                                lineHeight: 8,
-                                animation: true,
-                                animationDuration: 1500,
-                                progressColor: const Color(0xFF1565c0),
-                                backgroundColor: Colors.grey[200]!,
-                                barRadius: const Radius.circular(4),
-                              ),
-                              const SizedBox(height: 24),
-                              if (actividades.isNotEmpty) ...[
-                                const Text(
-                                  'Actividades',
-                                  style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                                SizedBox(
-                                  height: 210,
-                                  child: ListView.builder(
-                                  itemCount: actividades.length,
-                                  itemBuilder: (context, idx) {
-                                    final actividad = actividades[idx];
-                                    final progresoActividad = actividad.repeticiones > 0
-                                      ? (actividad.repeticionesCompletadas /
-                                        actividad.repeticiones).clamp(0.0, 1.0)
-                                      : 0.0;
-
-                                    return Padding(
-                                    padding: const EdgeInsets.only(bottom: 12),
-                                    child: Row(
-                                      children: [
-                                      Container(
-                                        width: 8,
-                                        height: 8,
-                                        decoration: BoxDecoration(
-                                        color: actividad.estado == EstadoActividad.completado
-                                          ? const Color(0xFF10b981)
-                                          : Colors.grey[400],
-                                        shape: BoxShape.circle,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Expanded(
-                                        child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                          actividad.nombre,
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                          ),
-                                          const SizedBox(height: 4),
-                                          LinearPercentIndicator(
-                                          percent: progresoActividad,
-                                          width: MediaQuery.of(context).size.width * 0.45,
-                                          lineHeight: 4,
-                                          animation: true,
-                                          animationDuration: 1000,
-                                          progressColor: const Color(0xFF10b981),
-                                          backgroundColor: Colors.grey[200]!,
-                                          barRadius: const Radius.circular(2),
-                                          ),
-                                        ],
-                                        ),
-                                      ),
-                                      Text(
-                                        '${actividad.valor} pts',
-                                        style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey[600],
-                                        fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      ],
-                                    ),
-                                    );
-                                  },
-                                  ),
-                                ),
-                              ] else ...[
-                                Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 20),
-                                    child: Text(
-                                      'No hay actividades registradas',
-                                      style: TextStyle(
-                                        color: Colors.grey[500],
-                                        fontStyle: FontStyle.italic,
-                                      ),
-                                    ),
-                                  ),
-                                ),
                               ],
-                            ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  )
                   );
                 },
               ),

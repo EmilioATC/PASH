@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar_app/data/local/isar_service.dart';
 import 'package:isar_app/data/models/actividad.dart';
 import 'package:isar_app/data/models/semana.dart';
 import 'package:isar_app/features/presentation/dialog/actividad.dart';
 import 'package:isar_app/features/presentation/dialog/semana.dart';
 
-class ActividadesScreen extends StatefulWidget {
+class ActividadesScreen extends ConsumerStatefulWidget {
   const ActividadesScreen({super.key});
 
   @override
-  State<ActividadesScreen> createState() => _ActividadesScreenState();
+  ConsumerState<ActividadesScreen> createState() => _ActividadesScreenState();
 }
 
-class _ActividadesScreenState extends State<ActividadesScreen> {
+class _ActividadesScreenState extends ConsumerState<ActividadesScreen> {
   final IsarService _isarService = IsarService();
 
   @override
@@ -105,6 +106,7 @@ class _ActividadesScreenState extends State<ActividadesScreen> {
                           (ctx, {semanaNueva, actividadExistente, modo}) =>
                               mostrarDialogoActividad(
                                 ctx,
+                                ref,
                                 semanaNueva: semanas[index],
                                 actividadExistente: actividadExistente,
                                 modo: modo,
