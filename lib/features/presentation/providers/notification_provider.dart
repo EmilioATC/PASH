@@ -47,12 +47,15 @@ class NotificationSettings {
       dailyReminderHour: dailyReminderHour ?? this.dailyReminderHour,
       dailyReminderMinute: dailyReminderMinute ?? this.dailyReminderMinute,
       dailySecReminderHour: dailySecReminderHour ?? this.dailySecReminderHour,
-      dailySecReminderMinute: dailySecReminderMinute ?? this.dailySecReminderMinute,
+      dailySecReminderMinute:
+          dailySecReminderMinute ?? this.dailySecReminderMinute,
       weeklyStartReminders: weeklyStartReminders ?? this.weeklyStartReminders,
       weeklyEndReminders: weeklyEndReminders ?? this.weeklyEndReminders,
       activityReminders: activityReminders ?? this.activityReminders,
-      completionNotifications: completionNotifications ?? this.completionNotifications,
-      progressNotifications: progressNotifications ?? this.progressNotifications,
+      completionNotifications:
+          completionNotifications ?? this.completionNotifications,
+      progressNotifications:
+          progressNotifications ?? this.progressNotifications,
     );
   }
 
@@ -97,56 +100,52 @@ class NotificationSettingsNotifier extends StateNotifier<NotificationSettings> {
   static const String _storageKey = 'notification_settings';
 
   Future<void> _loadSettings() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final jsonString = prefs.getString(_storageKey);
-      if (jsonString != null) {
-        final Map<String, dynamic> json = {};
-        final pairs = jsonString.replaceAll('{', '').replaceAll('}', '').split(',');
-        for (final pair in pairs) {
-          final keyValue = pair.split(':');
-          if (keyValue.length == 2) {
-            final key = keyValue[0].trim().replaceAll('"', '');
-            final value = keyValue[1].trim();
-            
-            if (value == 'true') {
-              json[key] = true;
-            } else if (value == 'false') {
-              json[key] = false;
-            } else if (int.tryParse(value) != null) {
-              json[key] = int.parse(value);
-            }
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = prefs.getString(_storageKey);
+    if (jsonString != null) {
+      final Map<String, dynamic> json = {};
+      final pairs = jsonString
+          .replaceAll('{', '')
+          .replaceAll('}', '')
+          .split(',');
+      for (final pair in pairs) {
+        final keyValue = pair.split(':');
+        if (keyValue.length == 2) {
+          final key = keyValue[0].trim().replaceAll('"', '');
+          final value = keyValue[1].trim();
+
+          if (value == 'true') {
+            json[key] = true;
+          } else if (value == 'false') {
+            json[key] = false;
+          } else if (int.tryParse(value) != null) {
+            json[key] = int.parse(value);
           }
         }
-        state = NotificationSettings.fromJson(json);
       }
-    } catch (e) {
-      print('Error loading notification settings: $e');
+      state = NotificationSettings.fromJson(json);
     }
   }
 
   Future<void> _saveSettings() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final json = state.toJson();
-      final jsonString = '{'
-          '"dailyReminders":${json['dailyReminders']},'
-          '"dailySecReminders":${json['dailySecReminders']},'
-          '"dailyReminderHour":${json['dailyReminderHour']},'
-          '"dailyReminderMinute":${json['dailyReminderMinute']},'
-          '"dailySecReminderHour":${json['dailySecReminderHour']},'
-          '"dailySecReminderMinute":${json['dailySecReminderMinute']},'
-          '"weeklyStartReminders":${json['weeklyStartReminders']},'
-          '"weeklyEndReminders":${json['weeklyEndReminders']},'
-          '"activityReminders":${json['activityReminders']},'
-          '"completionNotifications":${json['completionNotifications']},'
-          '"progressNotifications":${json['progressNotifications']}'
-          '}';
-      
-      await prefs.setString(_storageKey, jsonString);
-    } catch (e) {
-      print('Error saving notification settings: $e');
-    }
+    final prefs = await SharedPreferences.getInstance();
+    final json = state.toJson();
+    final jsonString =
+        '{'
+        '"dailyReminders":${json['dailyReminders']},'
+        '"dailySecReminders":${json['dailySecReminders']},'
+        '"dailyReminderHour":${json['dailyReminderHour']},'
+        '"dailyReminderMinute":${json['dailyReminderMinute']},'
+        '"dailySecReminderHour":${json['dailySecReminderHour']},'
+        '"dailySecReminderMinute":${json['dailySecReminderMinute']},'
+        '"weeklyStartReminders":${json['weeklyStartReminders']},'
+        '"weeklyEndReminders":${json['weeklyEndReminders']},'
+        '"activityReminders":${json['activityReminders']},'
+        '"completionNotifications":${json['completionNotifications']},'
+        '"progressNotifications":${json['progressNotifications']}'
+        '}';
+
+    await prefs.setString(_storageKey, jsonString);
   }
 
   void updateDailyReminders(bool enabled) {
@@ -206,7 +205,7 @@ class NotificationSettingsNotifier extends StateNotifier<NotificationSettings> {
   }
 }
 
-final notificationSettingsProvider = 
+final notificationSettingsProvider =
     StateNotifierProvider<NotificationSettingsNotifier, NotificationSettings>(
-  (ref) => NotificationSettingsNotifier(),
-);
+      (ref) => NotificationSettingsNotifier(),
+    );

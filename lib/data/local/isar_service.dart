@@ -108,4 +108,94 @@ class IsarService {
   Stream<List<Actividad>> obtenerTodasLasActividades() {
     return isar.actividads.where().watch(fireImmediately: true);
   }
+
+  // =====================
+  // MÉTODOS PARA HOME WIDGET
+  // =====================
+
+  // Obtener la semana más reciente con actividades
+  Future<Semana?> obtenerUltimaSemanaConActividades() async {
+    final semanas = await obtenerSemanasList();
+    if (semanas.isEmpty) return null;
+
+    // Buscar la semana más reciente que tenga actividades
+    for (final semana in semanas) {
+      final actividades = await obtenerActividadesPorSemanaByList(semana);
+      if (actividades.isNotEmpty) {
+        return semana;
+      }
+    }
+
+    return null;
+  }
+
+  // Calcular el progreso semanal (porcentaje completado)
+  Future<double> calcularProgresoSemanal(Semana semana) async {
+    final actividades = await obtenerActividadesPorSemanaByList(semana);
+    if (actividades.isEmpty) return 0.0;
+
+    int totalRepeticiones = 0;
+    int totalCompletadas = 0;
+
+    for (final actividad in actividades) {
+      totalRepeticiones += actividad.repeticiones;
+      totalCompletadas += actividad.repeticionesCompletadas;
+    }
+
+    if (totalRepeticiones == 0) return 0.0;
+    return (totalCompletadas / totalRepeticiones) * 100.0;
+  }
+
+  // Calcular puntos totales acumulados de la semana
+  Future<int> calcularPuntosTotalesSemana(Semana semana) async {
+    final actividades = await obtenerActividadesPorSemanaByList(semana);
+    int puntosTotales = 0;
+
+    for (final actividad in actividades) {
+        puntosTotales += actividad.valor * actividad.repeticionesCompletadas;
+
+    }
+
+    return puntosTotales;
+  }
+
+  // Obtener resumen semanal para el home widget
+  Future<Map<String, dynamic>?> obtenerResumenSemanal() async {
+    final semana = await obtenerUltimaSemanaConActividades();
+    if (semana == null) return null;
+
+    final actividades = await obtenerActividadesPorSemanaByList(semana);
+    final progreso = await calcularProgresoSemanal(semana);
+    final puntosTotales = await calcularPuntosTotalesSemana(semana);
+
+    // Crear lista de actividades con su información
+    final actividadesData = actividades.map((actividad) {
+      final progresoActividad = actividad.repeticiones > 0
+          ? (actividad.repeticionesCompletadas / actividad.repeticiones) * 100.0
+          : 0.0;
+
+      return {
+        'id': actividad.id,
+        'nombre': actividad.nombre,
+        'descripcion': actividad.descripcion,
+        'progreso': progresoActividad.round(),
+        'estado': actividad.estado.name,
+        'repeticionesCompletadas': actividad.repeticionesCompletadas,
+        'repeticionesTotales': actividad.repeticiones,
+        'valor': actividad.valor,
+      };
+    }).toList();
+
+    return {
+      'semanaId': semana.id,
+      'semanaNombre': 'Semana: ${semana.fechaInicio.day}/${semana.fechaInicio.month}',
+      'progresoTotal': progreso.round(),
+      'puntosTotales': puntosTotales,
+      'totalActividades': actividades.length,
+      'actividadesCompletadas': actividades.where((a) => a.estado == EstadoActividad.completado).length,
+      'actividadesEnProgreso': actividades.where((a) => a.estado == EstadoActividad.enProgreso).length,
+      'actividadesPendientes': actividades.where((a) => a.estado == EstadoActividad.pendiente).length,
+      'actividades': actividadesData,
+    };
+  }
 }

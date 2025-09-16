@@ -5,6 +5,7 @@ import 'package:isar_app/data/models/actividad.dart';
 import 'package:isar_app/data/models/semana.dart';
 import 'package:isar_app/features/presentation/dialog/actividad.dart';
 import 'package:isar_app/features/presentation/dialog/semana.dart';
+import 'package:isar_app/services/home_widget_service.dart';
 
 class ActividadesScreen extends ConsumerStatefulWidget {
   const ActividadesScreen({super.key});
@@ -218,7 +219,11 @@ class _SemanaCard extends StatelessWidget {
         ),
       ),
       child: Column(
-        children: [_buildSemanaHeader(context), _buildActividadesList(context), SizedBox(height: 10)],
+        children: [
+          _buildSemanaHeader(context),
+          _buildActividadesList(context),
+          SizedBox(height: 10),
+        ],
       ),
     );
   }
@@ -432,6 +437,8 @@ class _SemanaCard extends StatelessWidget {
     await IsarService.isar.writeTxn(() async {
       await IsarService.isar.actividads.put(actividad);
     });
+    
+    await HomeWidgetService.updateWidgetData();
   }
 }
 

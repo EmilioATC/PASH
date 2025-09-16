@@ -630,7 +630,6 @@ class NotificationService {
     return false;
   }
 
-  // Funciones auxiliares para calcular tiempos
   tz.TZDateTime _nextInstanceOfTime(int hour, int minute) {
     final now = tz.TZDateTime.now(tz.local);
     var scheduledDate = tz.TZDateTime(
@@ -665,27 +664,5 @@ class NotificationService {
     }
 
     return scheduledDate;
-  }
-
-  // Configurar todas las notificaciones por defecto
-  Future<void> setupDefaultNotifications() async {
-    await initialize();
-
-    // Recordatorio diario a las 9:00 AM
-    await scheduleDailyReminder(hour: 9, minute: 0);
-
-    // Recordatorio de inicio de semana (lunes 8:00 AM)
-    await scheduleWeeklyStartReminder(
-      weekday: DateTime.monday,
-      hour: 8,
-      minute: 0,
-    );
-
-    // Recordatorio de fin de semana (domingo 8:00 PM)
-    await scheduleWeeklyEndReminder(
-      weekday: DateTime.sunday,
-      hour: 20,
-      minute: 0,
-    );
   }
 }

@@ -29,9 +29,7 @@ class _ActividadCardState extends ConsumerState<ActividadCard> {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: widget.onEdit,
         borderRadius: BorderRadius.circular(12),
@@ -63,10 +61,7 @@ class _ActividadCardState extends ConsumerState<ActividadCard> {
               if (widget.actividad.descripcion.isNotEmpty) ...[
                 Text(
                   widget.actividad.descripcion,
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
                 ),
                 const SizedBox(height: 12),
               ],
@@ -74,32 +69,18 @@ class _ActividadCardState extends ConsumerState<ActividadCard> {
               // Información de progreso
               Row(
                 children: [
-                  Icon(
-                    Icons.repeat,
-                    size: 16,
-                    color: Colors.grey.shade600,
-                  ),
+                  Icon(Icons.repeat, size: 16, color: Colors.grey.shade600),
                   const SizedBox(width: 4),
                   Text(
                     '${widget.actividad.repeticionesCompletadas}/${widget.actividad.repeticiones}',
-                    style: TextStyle(
-                      color: Colors.grey.shade600,
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
                   ),
                   const SizedBox(width: 16),
-                  Icon(
-                    Icons.star,
-                    size: 16,
-                    color: Colors.amber,
-                  ),
+                  Icon(Icons.star, size: 16, color: Colors.amber),
                   const SizedBox(width: 4),
                   Text(
                     '${widget.actividad.valor}',
-                    style: TextStyle(
-                      color: Colors.grey.shade600,
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
                   ),
                 ],
               ),
@@ -115,12 +96,11 @@ class _ActividadCardState extends ConsumerState<ActividadCard> {
               // Barra de progreso
               LinearProgressIndicator(
                 value: widget.actividad.repeticiones > 0
-                    ? widget.actividad.repeticionesCompletadas / widget.actividad.repeticiones
+                    ? widget.actividad.repeticionesCompletadas /
+                          widget.actividad.repeticiones
                     : 0,
                 backgroundColor: Colors.grey.shade200,
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  _getProgressColor(),
-                ),
+                valueColor: AlwaysStoppedAnimation<Color>(_getProgressColor()),
               ),
 
               const SizedBox(height: 12),
@@ -129,7 +109,8 @@ class _ActividadCardState extends ConsumerState<ActividadCard> {
               Row(
                 children: [
                   if (widget.onComplete != null &&
-                      widget.actividad.estado != EstadoActividad.completado) ...[
+                      widget.actividad.estado !=
+                          EstadoActividad.completado) ...[
                     Expanded(
                       child: ElevatedButton.icon(
                         onPressed: _marcarComoCompletada,
@@ -239,11 +220,7 @@ class _ActividadCardState extends ConsumerState<ActividadCard> {
         color: Colors.blue.withAlpha(26),
         shape: BoxShape.circle,
       ),
-      child: const Icon(
-        Icons.notifications,
-        size: 16,
-        color: Colors.blue,
-      ),
+      child: const Icon(Icons.notifications, size: 16, color: Colors.blue),
     );
   }
 
@@ -257,19 +234,12 @@ class _ActividadCardState extends ConsumerState<ActividadCard> {
       ),
       child: Row(
         children: [
-          const Icon(
-            Icons.schedule,
-            size: 16,
-            color: Colors.blue,
-          ),
+          const Icon(Icons.schedule, size: 16, color: Colors.blue),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               _getNotificationDescription(),
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.blue,
-              ),
+              style: const TextStyle(fontSize: 12, color: Colors.blue),
             ),
           ),
         ],
@@ -284,7 +254,8 @@ class _ActividadCardState extends ConsumerState<ActividadCard> {
 
     switch (widget.actividad.frecuenciaNotificacion) {
       case FrecuenciaNotificacion.unica:
-        if (widget.actividad.fechaNotificacion != null && widget.actividad.horaNotificacion != null) {
+        if (widget.actividad.fechaNotificacion != null &&
+            widget.actividad.horaNotificacion != null) {
           final fecha = widget.actividad.fechaNotificacion!;
           final hora = widget.actividad.horaNotificacion!;
           return 'Una vez: ${fecha.day}/${fecha.month}/${fecha.year} ${hora.format(context)}';
@@ -298,14 +269,18 @@ class _ActividadCardState extends ConsumerState<ActividadCard> {
         return 'Diariamente (sin hora)';
 
       case FrecuenciaNotificacion.semanal:
-        if (widget.actividad.diaSemanaNotificacion != null && widget.actividad.horaNotificacionSemanal != null) {
-          final diaNombre = _getDiaSemanaNombreCompleto(widget.actividad.diaSemanaNotificacion!);
+        if (widget.actividad.diaSemanaNotificacion != null &&
+            widget.actividad.horaNotificacionSemanal != null) {
+          final diaNombre = _getDiaSemanaNombreCompleto(
+            widget.actividad.diaSemanaNotificacion!,
+          );
           return 'Semanalmente los $diaNombre a las ${widget.actividad.horaNotificacionSemanal!.format(context)}';
         }
         return 'Semanalmente (sin configurar)';
 
       case FrecuenciaNotificacion.personalizada:
-        if (widget.actividad.diasNotificacionPersonalizada.isNotEmpty && widget.actividad.horaNotificacionPersonalizada != null) {
+        if (widget.actividad.diasNotificacionPersonalizada.isNotEmpty &&
+            widget.actividad.horaNotificacionPersonalizada != null) {
           final diasNombres = widget.actividad.diasNotificacionPersonalizada
               .map((dia) => _getDiaSemanaNombreCorto(dia))
               .join(', ');
@@ -317,33 +292,50 @@ class _ActividadCardState extends ConsumerState<ActividadCard> {
 
   String _getDiaSemanaNombreCompleto(int dia) {
     switch (dia) {
-      case 1: return 'Lunes';
-      case 2: return 'Martes';
-      case 3: return 'Miércoles';
-      case 4: return 'Jueves';
-      case 5: return 'Viernes';
-      case 6: return 'Sábado';
-      case 7: return 'Domingo';
-      default: return '';
+      case 1:
+        return 'Lunes';
+      case 2:
+        return 'Martes';
+      case 3:
+        return 'Miércoles';
+      case 4:
+        return 'Jueves';
+      case 5:
+        return 'Viernes';
+      case 6:
+        return 'Sábado';
+      case 7:
+        return 'Domingo';
+      default:
+        return '';
     }
   }
 
   String _getDiaSemanaNombreCorto(int dia) {
     switch (dia) {
-      case 1: return 'Lun';
-      case 2: return 'Mar';
-      case 3: return 'Mié';
-      case 4: return 'Jue';
-      case 5: return 'Vie';
-      case 6: return 'Sáb';
-      case 7: return 'Dom';
-      default: return '';
+      case 1:
+        return 'Lun';
+      case 2:
+        return 'Mar';
+      case 3:
+        return 'Mié';
+      case 4:
+        return 'Jue';
+      case 5:
+        return 'Vie';
+      case 6:
+        return 'Sáb';
+      case 7:
+        return 'Dom';
+      default:
+        return '';
     }
   }
 
   Color _getProgressColor() {
     final progreso = widget.actividad.repeticiones > 0
-        ? widget.actividad.repeticionesCompletadas / widget.actividad.repeticiones
+        ? widget.actividad.repeticionesCompletadas /
+              widget.actividad.repeticiones
         : 0;
 
     if (progreso >= 1.0) return Colors.green;
@@ -370,11 +362,10 @@ class _ActividadCardState extends ConsumerState<ActividadCard> {
         widget.actividad.frecuenciaNotificacion = FrecuenciaNotificacion.diaria;
         widget.actividad.setHoraNotificacionDiaria(TimeOfDay.now());
 
-        await _notificationService.scheduleRecurringActivityNotification(widget.actividad);
+        await _notificationService.scheduleRecurringActivityNotification(
+          widget.actividad,
+        );
       }
-
-      // Aquí deberías guardar los cambios en la base de datos
-      // await isarService.actualizarActividad(widget.actividad);
 
       setState(() {});
 
@@ -393,7 +384,6 @@ class _ActividadCardState extends ConsumerState<ActividadCard> {
         );
       }
     } catch (e) {
-      print('Error toggling notifications: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -432,13 +422,7 @@ class _ActividadCardState extends ConsumerState<ActividadCard> {
     );
 
     if (confirmar == true && widget.onDelete != null) {
-      // Cancelar notificaciones antes de eliminar
-      try {
-        await _notificationService.cancelActivityNotification(widget.actividad);
-      } catch (e) {
-        print('Error cancelling notifications before deletion: $e');
-      }
-
+      await _notificationService.cancelActivityNotification(widget.actividad);
       widget.onDelete!();
     }
   }

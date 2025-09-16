@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:isar_app/data/local/isar_service.dart';
 import 'package:isar_app/data/models/actividad.dart';
 import 'package:isar_app/features/presentation/widgets/semana_dropdown.dart';
+import 'package:isar_app/services/home_widget_service.dart';
 
 import '../../../data/models/semana.dart';
 
@@ -13,7 +14,9 @@ Future<void> mostrarDialogoSemana(
 }) async {
   final formKey = GlobalKey<FormState>();
   final isarService = IsarService();
-  DateTime? fechaInicio = modo == "editar" ? semana?.fechaInicio : DateTime.now();
+  DateTime? fechaInicio = modo == "editar"
+      ? semana?.fechaInicio
+      : DateTime.now();
   DateTime? fechaFin =
       semana?.fechaFin ?? DateTime.now().add(const Duration(days: 7));
   bool estado = semana?.estado ?? true;
@@ -195,7 +198,7 @@ Future<void> mostrarDialogoSemana(
                   );
                 }
               }
-
+              await HomeWidgetService.updateWidgetData();
               if (context.mounted) {
                 Navigator.pop(context);
               }
